@@ -1,6 +1,6 @@
 import time
 import pandas as pd
-from datetime import date
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchAttributeException, NoSuchElementException
@@ -10,7 +10,8 @@ column_list = ["country", "media", "date", "headline", "article", "url"]
 
 df = pd.DataFrame(columns=column_list)
 
-url = 'https://www.google.com/search?q=site:https://www.aljazeera.com/+2010..2020+korea&ei=VDHsYMbuNYWkmAXk8Z7oAw&start=20&sa=N&ved=2ahUKEwjG6PWdwN3xAhUFEqYKHeS4Bz04ChDw0wN6BAgBEEw&biw=1200&bih=848'
+# site:https://www.aljazeera.com/ 2010..2020 korea
+url = 'https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.aljazeera.com%2F+2010..2020+korea&oq=site%3Ahttps%3A%2F%2Fwww.aljazeera.com%2F+2010..2020+korea&aqs=chrome.0.69i59j69i58.785j0j7&sourceid=chrome&ie=UTF-8'
 driver = webdriver.Chrome(executable_path='./chromedriver')
 
 # remove cookie banner
@@ -53,7 +54,7 @@ def get_data(hrefs):
             n_date = n_date.split(' ')
             n_date[1] = month[n_date[1]]
             n_date = list(map(int, n_date))
-            d = date(n_date[2],n_date[1],n_date[0])
+            d = datetime(n_date[2],n_date[1],n_date[0])
             news_date = str(d.strftime("%Y-%m-%d 00:00:00"))
             data.append(news_date)
 
@@ -68,7 +69,8 @@ def get_data(hrefs):
             article = body.find_elements_by_tag_name("p") 
             content = ""
             for t in article:
-                content += t.get_attribute("textContent").strip()
+                if t != "":
+                    content += t.get_attribute("textContent").strip()
 
             data.append(content)
             data.append(driver.current_url)
