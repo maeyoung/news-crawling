@@ -52,6 +52,9 @@ def get_content(href):
     try:
         body = driver.find_element_by_class_name("rich-text-article-body")
         article = body.find_elements_by_xpath("./div/p | ./div/ul/li")
+        title = driver.find_element_by_class_name("page-content.paywall")
+        headline = title.find_element_by_class_name("headline").get_attribute("textContent").strip()
+        print(headline)
         for b in article:
             content += b.get_attribute("textContent").strip()
         date = driver.find_element_by_class_name("byline").find_element_by_tag_name("time").get_attribute("datetime")
@@ -87,18 +90,17 @@ def get_html():
                 title = article.find_element_by_tag_name("a").get_attribute("textContent")
                 href = article.find_element_by_tag_name("a").get_attribute("href")
                 [date, content] = get_content(href)
-                if date == 0:
-                    date = process_datetime(1, int(li.find_element_by_class_name("promo-timestamp").get_attribute("data-timestamp")))
-                if date != 0 and content != 0:
-                    results['country'].append('USA')
-                    results['media'].append('LATimes')
-                    results['date'].append(date)
-                    results['headline'].append(title)
-                    results['article'].append(content)
-                    results['url'].append(href)
-            driver.get(nextBtn.find_element_by_tag_name("a").get_attribute("href"))
-            nextBtn = driver.find_element_by_class_name("search-results-module-next-page")
-            i += 1
+                # if date == 0:
+                #     date = process_datetime(1, int(li.find_element_by_class_name("promo-timestamp").get_attribute("data-timestamp")))
+                # if date != 0 and content != 0:
+                #     results['country'].append('USA')
+                #     results['media'].append('LATimes')
+                #     results['date'].append(date)
+                #     results['headline'].append(title)
+                #     results['article'].append(content)
+                #     results['url'].append(href)
+            # driver.get(nextBtn.find_element_by_tag_name("a").get_attribute("href"))
+            # nextBtn = driver.find_element_by_class_name("search-results-module-next-page")
     except KeyboardInterrupt or NoSuchElementException:
         driver.close()
         return results
