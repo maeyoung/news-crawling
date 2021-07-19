@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchAttributeException, NoSuchElementException
+from selenium.common.exceptions import  NoSuchElementException
 
 column_list = ["country", "media", "date", "headline", "article", "url"]
 
