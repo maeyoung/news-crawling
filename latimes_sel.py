@@ -24,26 +24,34 @@ results['headline'] = list()
 results['article'] = list()
 results['url'] = list()
 
-url = "https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fwww.latimes.com%2F+2010..2020+korea&ei=QoL1YLn9Es-UmAXI7qr4Bg&oq=site%3Ahttps%3A%2F%2Fwww.latimes.com%2F+2010..2020+korea&gs_lcp=Cgdnd3Mtd2l6EANKBAhBGAFQ-AxY5B5g1B9oAXAAeACAAdwCiAGoEpIBBzMuOS4xLjKYAQCgAQGqAQdnd3Mtd2l6wAEB&sclient=gws-wiz&ved=0ahUKEwi5puHWou_xAhVPCqYKHUi3Cm8Q4dUDCA4&uact=5"
-driver = webdriver.Chrome(executable_path='./chromedriver')
+url = "https://www.google.com/search?q=site%3Awww.latimes.com+korea&sxsrf=ALeKk00edGqjzjJ3fIEzZacIoUF9oPl3ag%3A1626706287442&source=lnt&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2010%2Ccd_max%3A12%2F31%2F2020&tbm="
+driver = webdriver.Chrome(executable_path='chromedriver')
 driver.implicitly_wait(time_to_wait=5)
 driver.get(url=url)
 
+xlxs_dir = "./LATimes.xlsx"
+writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
+
 # get news url from google html script
-def get_href_date(hrefs):
+def get_href_date():
+    hrefs = []
+    dates = []
     try:
         parts = driver.find_elements_by_class_name('tF2Cxc')
         for elem in parts:
             head = elem.find_element_by_class_name('yuRUbf')
             body = elem.find_element_by_class_name('IsZvec')
             href = head.find_element_by_tag_name('a').get_attribute('href')
-            date = body.find_element_by_class_name('MUxGbd.wuQ4Ob.WZ8Tjf').get_attribute("textContent")
-            hrefs.append([href, date])
+            date = ""
+            if check_is_exist("class", 'MUxGbd.wuQ4Ob.WZ8Tjf'):
+                date = body.find_element_by_class_name('MUxGbd.wuQ4Ob.WZ8Tjf').get_attribute("textContent")
+            hrefs.append(href)
+            dates.append(process_datetime(2, date))
         # html = driver.find_elements_by_class_name('yuRUbf')
         # for elem in html:
         #     href = elem.find_element_by_tag_name('a').get_attribute('href')
         #     hrefs.append(href)
-        return (hrefs)
+        return hrefs, dates
 
     except KeyboardInterrupt or NoSuchElementException:
         print('Error')
@@ -55,11 +63,16 @@ def process_datetime(type, info):
         date = info[:10]
         time = info[11:19]
         return date + " " + time
-    else:
+    elif type == 1:
         date_obj = datetime.datetime.fromtimestamp(info/100)
         date = date_obj.strftime("%Y-%m-%d")
         times = date_obj.strftime("%H:%M:%S")
         return date + " " + times
+    else:
+        if info != "":
+            date_obj = datetime.datetime.strptime(info, "%Y. %m. %d. — ")
+            date = date_obj.strftime("%Y-%m-%d")
+        return date + " " + "00:00:00"
 
 
 def get_content():
@@ -80,20 +93,18 @@ def get_content():
         return [headline, date, content]
 
 
-def get_html(hrefs):
-    
+def get_html(hrefs, dates):
     try:
-       
-        for link in hrefs:
+        for link, auth_date in zip(hrefs, dates):
             driver.execute_script("window.open();")
             driver.switch_to.window(driver.window_handles[-1])
             driver.get(url=link)
             time.sleep(3)
 
-            [title, date, content] = get_content(link)
+            [title, date, content] = get_content()
             if date == 0:
                 # to-do: get date info from google lists
-                continue
+                date = auth_date
             if date != 0 and content != 0:
                 results['country'].append('USA')
                 results['media'].append('LATimes')
@@ -136,14 +147,14 @@ def check_exist_button(b_name):
 
 if __name__ == '__main__':
     hrefs = []
-    hrefs = get_href_date(hrefs)
-    csv = get_content(hrefs)
+    dates = []
+    hrefs, dates = get_href_date()
+    csv = get_html(hrefs, dates)
     while check_exist_button('pnnext'):
         hrefs = []
-        hrefs = get_href_date(hrefs)
-        csv = get_content(hrefs)
-    xlxs_dir = "./LATimes.xlsx"
-    writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
+        dates = []
+        hrefs, dates = get_href_date(hrefs)
+        csv = get_html(hrefs, dates)
     dict_to_df = pd.DataFrame.from_dict(csv)
     dict_to_df.to_excel(writer, sheet_name="LA TIMES")
     writer.save()
