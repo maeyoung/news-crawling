@@ -1,6 +1,7 @@
 *.csv
 *.xlsx
 *.spec
+*.zip
 chromedriver
 chromedriver.exe
 .idea/
