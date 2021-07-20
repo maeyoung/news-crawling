@@ -78,7 +78,7 @@ def get_content():
     content = ""
     try:
         body = driver.find_element_by_class_name("rich-text-article-body")
-        article = body.find_elements_by_xpath("./div/p | ./div/ul/li")
+        article = body.find_elements_by_xpath("./div/p | ./div/ul/li | ./div/div/div/div/p")
         title = driver.find_element_by_class_name("page-content.paywall")
         headline = title.find_element_by_class_name("headline").get_attribute("textContent").strip()
         for b in article:
@@ -107,7 +107,7 @@ def get_html(hrefs, dates):
             if date == 0:
                 # to-do: get date info from google lists
                 date = auth_date
-            if date != 0 and content != 0:
+            if date != 0 and content != "":
                 results['country'].append('USA')
                 results['media'].append('LATimes')
                 results['date'].append(date)
