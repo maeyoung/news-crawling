@@ -1,20 +1,17 @@
-# import selenium
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-# from selenium.webdriver import ActionChains
 
 from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.common.by import By
 
 # from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.support.ui import Select
 # from selenium.webdriver.support.ui import WebDriverWait
 
 import pandas as pd
-# import os
-# import sys
 import time
 import datetime
+# get error log
+import logging
 
 results = {}
 results['country'] = list()
@@ -24,7 +21,7 @@ results['headline'] = list()
 results['article'] = list()
 results['url'] = list()
 
-url = "https://www.google.com/search?q=site%3Awww.latimes.com+korea&sxsrf=ALeKk00edGqjzjJ3fIEzZacIoUF9oPl3ag%3A1626706287442&source=lnt&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2010%2Ccd_max%3A12%2F31%2F2020&tbm="
+url = "https://www.google.com/search?q=site%3Alatimes.com+korea&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2010%2Ccd_max%3A12%2F31%2F2020&ei=YpP2YOyMKdvdmAWDkq-ACg&oq=site%3Alatimes.com+korea&gs_lcp=Cgdnd3Mtd2l6EANKBAhBGAFQiwxYmRBgsxVoAXAAeACAAZsCiAHLBpIBBTEuMi4ymAEAoAEBqgEHZ3dzLXdpesABAQ&sclient=gws-wiz&ved=0ahUKEwjsxbGTp_HxAhXbLqYKHQPJC6AQ4dUDCA4&uact=5"
 # test = 'https://www.google.com/search?q=site%3Awww.latimes.com+korea+photo&ei=RXT2YOeFJdSSoATFoaLwCg&oq=site%3Awww.latimes.com+korea+photo&gs_lcp=Cgdnd3Mtd2l6EANKBAhBGAFQ8QpYyxVgxhZoAXAAeACAAegBiAGjB5IBBTEuNS4xmAEAoAEBqgEHZ3dzLXdpesABAQ&sclient=gws-wiz&ved=0ahUKEwinvKy9ifHxAhVUCYgKHcWQCK4Q4dUDCA4&uact=5'
 driver = webdriver.Chrome(executable_path='./chromedriver')
 driver.implicitly_wait(time_to_wait=5)
