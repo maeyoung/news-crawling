@@ -25,7 +25,7 @@ results['article'] = list()
 results['url'] = list()
 
 url = "https://www.google.com/search?q=site%3Awww.latimes.com+korea&sxsrf=ALeKk00edGqjzjJ3fIEzZacIoUF9oPl3ag%3A1626706287442&source=lnt&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2010%2Ccd_max%3A12%2F31%2F2020&tbm="
-driver = webdriver.Chrome(executable_path='chromedriver')
+driver = webdriver.Chrome(executable_path='./chromedriver')
 driver.implicitly_wait(time_to_wait=5)
 driver.get(url=url)
 
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     while check_exist_button('pnnext'):
         hrefs = []
         dates = []
-        hrefs, dates = get_href_date(hrefs)
+        hrefs, dates = get_href_date()
         csv = get_html(hrefs, dates)
     dict_to_df = pd.DataFrame.from_dict(csv)
     dict_to_df.to_excel(writer, sheet_name="LA TIMES")

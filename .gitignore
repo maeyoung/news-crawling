@@ -2,6 +2,7 @@
 *.xlsx
 *.spec
 chromedriver
+chromedriver.exe
 .idea/
 __pycache__/
 build/
