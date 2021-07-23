@@ -158,3 +158,5 @@ if __name__ == '__main__':
     writer.save()
     print("데이터 수집 완료")
     driver.close()
+# "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&ct=2097152&si=huanqiu.com&oq=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_pq=bf92af700009d7fe&rsv_t=0f91uZXQlpsDugWDd7vzdMeYRk%2FbKAI14VStZTYQKZidJ1nWcGiV32Wv20w&rqlang=cn&rsv_dl=tb&rsv_enter=1&gpc=stf%3D1262358000%2C1609426800%7Cstftype%3D2&tfflag=95&bs=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_jmp=fail"
+# "https://www.baidu.com/s?wd=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&pn=10&oq=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&ct=2097152&ie=utf-8&si=huanqiu.com&rsv_pq=e2ae024d0009e590&rsv_t=9619UV2s2cfUtOqtq1wFbVIK%2B1nGllqVUaRTk22JNy7OFQOuGWm2bJTfaTQ&gpc=stf%3D1262358000%2C1609426800%7Cstftype%3D2&tfflag=95&bs=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_jmp=fail"
