@@ -117,7 +117,7 @@ def get_html():
         driver.close()
         print("현재 데이터까지 저장 완료")
         print("요소 에러 - 에러 위치: "+href)
-        return results
+        return 0, results
     else:
         dict_to_df = pd.DataFrame.from_dict(results)
         dict_to_df.to_excel(writer, sheet_name="Bangkok Post")
@@ -126,14 +126,16 @@ def get_html():
         print("현재 데이터까지 저장 완료")
         print("기타 에러 - 에러 위치: "+href)
         print(sys.exc_info()[0])
-    return results
+        return 0, results
+    return 1, results
 
 
 if __name__ == '__main__':
     start = time.time()
-    csv = get_html()
+    status, csv = get_html()
     dict_to_df = pd.DataFrame.from_dict(csv)
     dict_to_df.to_excel(writer, sheet_name="Bangkok Post")
     writer.save()
-    print("데이터 수집 완료")
-    print("time: ", time.time() - start)
+    if status == 1:
+        print("데이터 수집 완료")
+    print("소요시간: ", time.time() - start +"초")
