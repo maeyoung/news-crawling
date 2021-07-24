@@ -17,8 +17,8 @@ import sys
 import time
 import datetime
 
-# url = "https://search.bangkokpost.com/search/result?start=0&q=korea&category=all&refinementFilter=&sort=newest&rows=10"
-url ="https://search.bangkokpost.com/search/result?start=1620&q=korea&category=all&refinementFilter=&sort=newest&rows=10"
+url = "https://search.bangkokpost.com/search/result?start=0&q=korea&category=all&refinementFilter=&sort=newest&rows=10"
+# url ="https://search.bangkokpost.com/search/result?start=1620&q=korea&category=all&refinementFilter=&sort=newest&rows=10"
 caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "normal"
 driver = webdriver.Chrome(desired_capabilities=caps, executable_path='./chromedriver')
