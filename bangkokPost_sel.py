@@ -138,4 +138,4 @@ if __name__ == '__main__':
     writer.save()
     if status == 1:
         print("데이터 수집 완료")
-    print("소요시간: ", time.time() - start +"초")
+    print("소요시간: " + str(time.time() - start) +"초")
