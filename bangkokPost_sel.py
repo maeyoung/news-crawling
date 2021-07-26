@@ -102,12 +102,13 @@ def get_html():
                     if date == 0:
                         date = process_datetime(1, article.find_element_by_class_name("writerdetail").find_element_by_xpath("./span/a").get_attribute("textContent"))
                     if date != 0 and content != "":
-                        results['country'].append('Thailand')
-                        results['media'].append('Bangkok Post')
-                        results['date'].append(date)
-                        results['headline'].append(title)
-                        results['article'].append(content)
-                        results['url'].append(href)
+                        if 'korea' in content:
+                            results['country'].append('Thailand')
+                            results['media'].append('Bangkok Post')
+                            results['date'].append(date)
+                            results['headline'].append(title)
+                            results['article'].append(content)
+                            results['url'].append(href)
             driver.get(curBtn.find_element_by_xpath("following-sibling::a").get_attribute("href"))
             curBtn = driver.find_element_by_class_name("page-Navigation").find_element_by_class_name("active")
     except KeyboardInterrupt or NoSuchElementException:
