@@ -121,12 +121,13 @@ def get_html(hrefs, dates):
                 # to-do: get date info from google lists
                 date = auth_date
             if date != 0 and content != "":
-                results['country'].append('USA')
-                results['media'].append('LATimes')
-                results['date'].append(date)
-                results['headline'].append(title)
-                results['article'].append(content)
-                results['url'].append(link)
+                if 'korea' in content:
+                    results['country'].append('USA')
+                    results['media'].append('LATimes')
+                    results['date'].append(date)
+                    results['headline'].append(title)
+                    results['article'].append(content)
+                    results['url'].append(link)
 
             driver.close()
             driver.switch_to.window(driver.window_handles[0])
@@ -167,37 +168,41 @@ if __name__ == '__main__':
     m30 = [4, 6, 9, 11]
     cnt = 0
     start = time.time()
-    for year in years:
-        month = 1
-        while month < 13:
-            if month == 2 and year % 4 == 0 :
-                day = 29
-            elif month == 2:
-                day = 28
-            elif month in m30:
-                day = 30
-            elif month in m31:
-                day = 31
-            mindate = str(month)+"/1/"+str(year)
-            maxdate = str(month)+"/"+str(day)+"/"+str(year)
-            month += 1
-            # url = "https://www.google.com/search?q=site:latimes.com+korea&tbs=cdr:1,cd_min:"+mindate+",cd_max:"+maxdate+"&sxsrf=ALeKk03Hf-An3StLLG2UrI734Sgb1u3Ryg:1627127389560&ei=Xf77YKvWIY_YhwOska3wDA&start=0&sa=N&filter=0&ved=2ahUKEwjr-Lvw0fvxAhUP7GEKHaxIC84Q8tMDegQIARBA&biw=1396&bih=694"
-            url = "https://www.google.com/search?q=site:latimes.com+korea&hl=ko&tbs=cdr:1,cd_min:"+mindate+",cd_max:"+maxdate+"&sxsrf=ALeKk02YYZF7z-FlZayh-pjIOHwKGUffBw:1627147371767&filter=0&biw=1536&bih=763"
-            driver.get(url=url)
-            hrefs, dates = get_href_date()
-            if len(hrefs) < 10:
-                time.sleep(40)
-            # csv = get_html(hrefs, dates)
-            get_html(hrefs, dates)
-            while check_exist_button('pnnext'):
+    try:
+        for year in years:
+            month = 1
+            while month < 13:
+                if month == 2 and year % 4 == 0 :
+                    day = 29
+                elif month == 2:
+                    day = 28
+                elif month in m30:
+                    day = 30
+                elif month in m31:
+                    day = 31
+                mindate = str(month)+"/1/"+str(year)
+                maxdate = str(month)+"/"+str(day)+"/"+str(year)
+                month += 1
+                # url = "https://www.google.com/search?q=site:latimes.com+korea&tbs=cdr:1,cd_min:"+mindate+",cd_max:"+maxdate+"&sxsrf=ALeKk03Hf-An3StLLG2UrI734Sgb1u3Ryg:1627127389560&ei=Xf77YKvWIY_YhwOska3wDA&start=0&sa=N&filter=0&ved=2ahUKEwjr-Lvw0fvxAhUP7GEKHaxIC84Q8tMDegQIARBA&biw=1396&bih=694"
+                url = "https://www.google.com/search?q=site:latimes.com+korea&hl=ko&tbs=cdr:1,cd_min:"+mindate+",cd_max:"+maxdate+"&sxsrf=ALeKk02YYZF7z-FlZayh-pjIOHwKGUffBw:1627147371767&filter=0&biw=1536&bih=763"
+                driver.get(url=url)
                 hrefs, dates = get_href_date()
+                if len(hrefs) < 9:
+                    time.sleep(40)
+                # csv = get_html(hrefs, dates)
                 get_html(hrefs, dates)
-            # csv = get_html(hrefs, dates))
-    dict_to_df = pd.DataFrame.from_dict(results)
-    dict_to_df.to_excel(writer, sheet_name="LA TIMES")
-    writer.save()
-    print("데이터 수집 완료")
-    print("소요시간: "+str(time.time() - start)+"초")
-    driver.close()
+                while check_exist_button('pnnext'):
+                    hrefs, dates = get_href_date()
+                    get_html(hrefs, dates)
+                # csv = get_html(hrefs, dates))
+    except KeyboardInterrupt:
+        print("keyboard Interrupt")
+    finally:
+        dict_to_df = pd.DataFrame.from_dict(results)
+        dict_to_df.to_excel(writer, sheet_name="LA TIMES")
+        writer.save()
+        print("데이터 수집 완료")
+        print("소요시간: "+str(time.time() - start)+"초")
+        driver.close()
 # "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&ct=2097152&si=huanqiu.com&oq=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_pq=bf92af700009d7fe&rsv_t=0f91uZXQlpsDugWDd7vzdMeYRk%2FbKAI14VStZTYQKZidJ1nWcGiV32Wv20w&rqlang=cn&rsv_dl=tb&rsv_enter=1&gpc=stf%3D1262358000%2C1609426800%7Cstftype%3D2&tfflag=95&bs=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_jmp=fail"
 # "https://www.baidu.com/s?wd=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&pn=10&oq=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&ct=2097152&ie=utf-8&si=huanqiu.com&rsv_pq=e2ae024d0009e590&rsv_t=9619UV2s2cfUtOqtq1wFbVIK%2B1nGllqVUaRTk22JNy7OFQOuGWm2bJTfaTQ&gpc=stf%3D1262358000%2C1609426800%7Cstftype%3D2&tfflag=95&bs=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_jmp=fail"
