@@ -60,20 +60,20 @@ def process_datetime(type, info):
             return "no date information"
 
 
-def get_href(hrefs):
-    try:
-        html = driver.find_elements_by_class_name('yuRUbf')
-        for elem in html:
-            head = elem.find_element_by_class_name("LC20lb.DKV0Md").text
-            if "| Today's latest from Al Jazeera" in head:
-                continue
-            href = elem.find_element_by_tag_name('a').get_attribute('href')
-            hrefs.append(href)
-        return (hrefs)
+# def get_href(hrefs):
+#     try:
+#         html = driver.find_elements_by_class_name('yuRUbf')
+#         for elem in html:
+#             head = elem.find_element_by_class_name("LC20lb.DKV0Md").text
+#             if "| Today's latest from Al Jazeera" in head:
+#                 continue
+#             href = elem.find_element_by_tag_name('a').get_attribute('href')
+#             hrefs.append(href)
+#         return (hrefs)
 
-    except KeyboardInterrupt or NoSuchElementException:
-        print('Error')
-        driver.close()
+#     except KeyboardInterrupt or NoSuchElementException:
+#         print('Error')
+#         driver.close()
 
 def get_data(hrefs):
 
