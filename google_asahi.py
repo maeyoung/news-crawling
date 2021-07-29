@@ -27,7 +27,7 @@ print("로그인 성공")
 xlxs_dir = "./Asahi.xlsx"
 writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
 
-date_word = ["년", "월", "일", "시", "분"]
+date_word = ["年", "月", "日", "時", "分"]
 column_list = ["country", "media", "date", "headline", "article", "url"]
 df = pd.DataFrame(columns=column_list)
 
@@ -69,35 +69,39 @@ def process_datetime(type, info):
         for word in date_word:
             info = info.replace(word, ' ')
         info = info.split()
+        print(info)
         date = info[0]+'-'+info[1]+'-'+info[2]
-        time = info[3]+':'+info[4]+':00'
+        # time = info[3]+':'+info[4]+':00'
+        time = "00:00:00"
         dt = datetime.strptime(date+' '+time, '%Y-%m-%d %H:%M:%S')
         return dt
 
 
-def get_html_content(auth_date):
+def get_html_content(auth_date, cur_url):
     html_data = []
+
+    # 헤드라인 있는지 또는 기사내용이 있는지 부터 확인하기
+    if check_is_exist(driver, "id", "HeadLine") == False:
+        return "Error"
+    if check_is_exist(driver, "class", "BodyTxt") == False:
+        return "Error"
+
     # date
     if check_is_exist(driver, "class", "Utility"):
-        date = driver.find_element_by_class_name("Utility").text
+        date = driver.find_element_by_class_name("Utility").find_element_by_tag_name("p").text
         date = process_datetime(2, date)
     else:
         date = auth_date
     html_data.append(date)
 
     # headline
-    if check_is_exist(driver, "id", "HeadLine") == False:
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        return 0
-    title = driver.find_element_by_id("HeadLine").find_element_by_tag_name("h1").text
+    title = driver.find_element_by_id("HeadLine")
+    if check_is_exist(title, "tag", "h1") == False:
+        return "Error"
+    title = title.find_element_by_tag_name("h1").text
     html_data.append(title)
 
     # article 
-    if check_is_exist(driver, "class", "BodyTxt") == False:
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        return 0
     body = driver.find_element_by_class_name("BodyTxt")
     article = body.find_elements_by_tag_name("p")
     content = ""
@@ -105,6 +109,9 @@ def get_html_content(auth_date):
         if t != "":
             content += t.get_attribute("textContent").strip()
     html_data.append(content)
+
+    # url
+    html_data.append(cur_url)
     return html_data
 
 
@@ -119,51 +126,63 @@ def get_data(hrefs, dates):
             data = ['Japan', 'Asahi']
             cur_url = driver.current_url
 
-            if "html" in cur_url:
-                html_data = get_html_content(auth_date)
-                data.append(html_data)
+            html_data = get_html_content(auth_date, cur_url)
+            if html_data != "Error":
+                data = data + html_data
+                df.loc[len(df)] = data
 
+            # asahi.com/articles 기준 
             else:
                 # date
-                if check_is_exist(driver, "class", "_3F5fI"):
-                    date = driver.find_element_by_class_name("_3F5gI").find_element_by_tag_name("time").get_attribute("datetime")
+                if check_is_exist(driver, "class", "UpdateDate"):
+                    date = driver.find_element_by_class_name("UpdateDate").find_element_by_tag_name("time").get_attribute("datetime")
                     date = process_datetime(0, date)
                 else:
                     date = auth_date
                 data.append(date)
 
                 # headline
-                if check_is_exist(driver, "class", "_2CsPo") == False:
+                if check_is_exist(driver, "class", "Title") == False:
                     driver.close()
                     driver.switch_to.window(driver.window_handles[0])
                     continue
-                title = driver.find_element_by_class_name("_2CsPo").find_element_by_tag_name("h1").text
+                title = driver.find_element_by_class_name("Title")
+                if check_is_exist(title, "tag", "h1") == False:
+                    driver.close()
+                    driver.switch_to.window(driver.window_handles[0])
+                    continue
+                title = title.find_element_by_tag_name("h1").text
                 data.append(title)
 
                 # article 
-                if check_is_exist(driver, "class", "_3YqJ1") == False:
+                if check_is_exist(driver, "class", "ArticleText") == False:
                     driver.close()
                     driver.switch_to.window(driver.window_handles[0])
                     continue
-                body = driver.find_element_by_class_name("_3YqJ1")
+                body = driver.find_element_by_class_name("ArticleText")
                 article = body.find_elements_by_tag_name("p")
                 content = ""
                 for t in article:
                     if t != "":
                         content += t.get_attribute("textContent").strip()
+                if "韓国" not in content:
+                    continue
                 data.append(content)
                     
-            # url
-            data.append(cur_url)
+                # url
+                data.append(cur_url)
 
-            print(data)
-            df.loc[len(df)] = data
+                # print(data)
+                df.loc[len(df)] = data
 
             driver.close()
             driver.switch_to.window(driver.window_handles[0])
+
     except KeyboardInterrupt or NoSuchElementException:
         df.to_excel(writer, sheet_name="Asahi")
         writer.save()
+        print("다 못하고 중간에 멈췄어요!!")
+        print("소요시간: " + str(time.time() - start) + "초")
         print("에러 위치 : " + cur_url)
         print("현재 데이터까지 저장완료")
         driver.close()
@@ -175,6 +194,8 @@ def check_is_exist(window, type, name):
             window.find_element_by_class_name(name)
         elif (type == "id"):
             window.find_element_by_id(name)
+        elif (type == "tag"):
+            window.find_element_by_tag_name(name)
     except NoSuchElementException:
         return False
     return True
@@ -212,6 +233,7 @@ if __name__ == '__main__':
                 maxdate = str(month) + "/" + str(day) + "/" + str(year)
                 month += 1
                 search_url = "https://www.google.com/search?q=site:www.asahi.com+%E9%9F%93%E5%9B%BD&tbs=cdr:1,cd_min:" + mindate + ",cd_max:" + maxdate + "&filter=0&biw=1792&bih=1008"
+                # search_url = "https://www.google.com/search?q=site:www.asahi.com/articles+%E9%9F%93%E5%9B%BD&tbs=cdr:1,cd_min:" + mindate + ",cd_max:" + maxdate + "&ei=NfsAYbuxOs-Fr7wPj6u_0AQ&start=0&sa=N&ved=2ahUKEwj7n7DJk4XyAhXPwosBHY_VD0o4yAEQ8tMDegQIARA5&biw=1029&bih=1008"
                 driver.get(url=search_url)
                 time.sleep(3)
                 hrefs, dates = get_href_date()
@@ -226,7 +248,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt as k:
         print(k)
     finally:
-        print("소요시간: " + str(time.time() - start) + "초")
+        print("최종소요시간: " + str(time.time() - start) + "초")
         
 
 # url = 'https://www.google.com/search?q=site:www.asahi.com+%E9%9F%93%E5%9B%BD&tbs=cdr:1,cd_min:01/01/2010,cd_max:12/31/2010&filter=0&biw=1792&bih=1008'
