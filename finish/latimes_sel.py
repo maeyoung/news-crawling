@@ -26,7 +26,6 @@ def save(year, results) :
     writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
     dict_to_df = pd.DataFrame.from_dict(results)
     dict_to_df.to_excel(writer, sheet_name="LA TIMES")
-    results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
     writer.save()
 
 # get news url from google html script
