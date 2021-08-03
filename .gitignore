@@ -8,3 +8,4 @@ chromedriver.exe
 __pycache__/
 build/
 dist/
+practice.py
