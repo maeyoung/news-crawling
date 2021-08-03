@@ -162,7 +162,7 @@ if __name__ == '__main__':
                 url = "https://search.bangkokpost.com/search/result?q=korea&category=all&sort=newest&rows=10&refinementFilter=&publishedDate=%5B"+mindate+"T00%3A00%3A00Z%3B"+maxdate+"T23%3A59%3A59Z%5D"
                 driver.get(url=url)
                 status, csv = get_html(year, csv)
-                save(year, csv)
+            save(year, csv)
             # xlxs_dir = "./BangkokPost.xlsx"
             # writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
             # dict_to_df = pd.DataFrame.from_dict(csv)

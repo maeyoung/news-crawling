@@ -176,10 +176,10 @@ if __name__ == '__main__':
                 hrefs, dates = get_href_date()
                 if len(hrefs) < 9:
                     time.sleep(40)
-                get_html(year, hrefs, dates, results)
+                results = get_html(year, hrefs, dates, results)
                 while check_exist_button('pnnext'):
                     hrefs, dates = get_href_date()
-                    get_html(year, hrefs, dates, results)
+                    results = get_html(year, hrefs, dates, results)
             save(year, results)
             print(str(year) + "년 데이터 수집 완료")
     except KeyboardInterrupt:
