@@ -80,7 +80,7 @@ def process_datetime(type, info):
 def get_html_content(auth_date, cur_url):
     html_data = []
 
-    # 헤드라인 있는지 또는 기사내용이 있는지 부터 확인하기
+    
     if check_is_exist(driver, "id", "HeadLine") == False:
         return "Error"
     if check_is_exist(driver, "class", "BodyTxt") == False:
@@ -133,6 +133,16 @@ def get_data(hrefs, dates):
 
             # asahi.com/articles 기준 
             else:
+                # 헤드라인 있는지 또는 기사내용이 있는지 부터 확인하기
+                if check_is_exist(driver, "class", "Title") == False:
+                    driver.close()
+                    driver.switch_to.window(driver.window_handles[0])
+                    continue
+                if check_is_exist(driver, "class", "ArticleText") == False:
+                    driver.close()
+                    driver.switch_to.window(driver.window_handles[0])
+                    continue
+
                 # date
                 if check_is_exist(driver, "class", "UpdateDate"):
                     date = driver.find_element_by_class_name("UpdateDate").find_element_by_tag_name("time").get_attribute("datetime")
@@ -142,10 +152,6 @@ def get_data(hrefs, dates):
                 data.append(date)
 
                 # headline
-                if check_is_exist(driver, "class", "Title") == False:
-                    driver.close()
-                    driver.switch_to.window(driver.window_handles[0])
-                    continue
                 title = driver.find_element_by_class_name("Title")
                 if check_is_exist(title, "tag", "h1") == False:
                     driver.close()
@@ -155,10 +161,6 @@ def get_data(hrefs, dates):
                 data.append(title)
 
                 # article 
-                if check_is_exist(driver, "class", "ArticleText") == False:
-                    driver.close()
-                    driver.switch_to.window(driver.window_handles[0])
-                    continue
                 body = driver.find_element_by_class_name("ArticleText")
                 article = body.find_elements_by_tag_name("p")
                 content = ""
