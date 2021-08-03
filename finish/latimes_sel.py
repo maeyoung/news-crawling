@@ -5,41 +5,29 @@ from selenium.webdriver.chrome.options import Options
 
 from selenium.webdriver.common.keys import Keys
 
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.support.ui import Select
-# from selenium.webdriver.support.ui import WebDriverWait
-
 import pandas as pd
 import time
 import datetime
 # get error log
 import logging
 
-results = {}
-results['country'] = list()
-results['media'] = list()
-results['date'] = list()
-results['headline'] = list()
-results['article'] = list()
-results['url'] = list()
-# url = "https://www.google.com/search?q=site:latimes.com+korea&tbs=cdr:1,cd_min:1/1/2010,cd_max:6/30/2010&sxsrf=ALeKk03Hf-An3StLLG2UrI734Sgb1u3Ryg:1627127389560&ei=Xf77YKvWIY_YhwOska3wDA&start=200&sa=N&filter=0&ved=2ahUKEwjr-Lvw0fvxAhUP7GEKHaxIC84Q8tMDegQIARBA&biw=1396&bih=694"
-# url = "https://www.google.com/search?q=site%3Alatimes.com+korea&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2010%2Ccd_max%3A12%2F31%2F2020&ei=YpP2YOyMKdvdmAWDkq-ACg&oq=site%3Alatimes.com+korea&gs_lcp=Cgdnd3Mtd2l6EANKBAhBGAFQiwxYmRBgsxVoAXAAeACAAZsCiAHLBpIBBTEuMi4ymAEAoAEBqgEHZ3dzLXdpesABAQ&sclient=gws-wiz&ved=0ahUKEwjsxbGTp_HxAhXbLqYKHQPJC6AQ4dUDCA4&uact=5"
-
+# results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
 # caps = DesiredCapabilities().CHROME
 # caps["pageLoadStrategy"] = "normal"
 caps = DesiredCapabilities().CHROME
 caps["unexpectedAlertBehaviour"] = "ACCEPT"
 chrome_options = Options()
 chrome_options.set_capability('unhandledPromptBehavior', 'accept')
-# options = Options()
-# options.set_capability("unhandledPromptBehavior", "ACCEPT") #UnexpectedAlertPresentException: Alert Text: Got metadataThe request was forbidden.  Your credentials may be denied or suspended. Message: unexpected alert open: {Alert text : Got metadataThe request was forbidden.  Your credentials may be denied or suspended.}
-
 driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='./chromedriver')
 driver.implicitly_wait(time_to_wait=5)
-# driver.get(url=url)
 
-xlxs_dir = "./LATimes.xlsx"
-writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
+def save(year, results) :
+    xlxs_dir = "./LATimes("+str(year)+").xlsx"
+    writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
+    dict_to_df = pd.DataFrame.from_dict(results)
+    dict_to_df.to_excel(writer, sheet_name="LA TIMES")
+    results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
+    writer.save()
 
 # get news url from google html script
 def get_href_date():
@@ -55,7 +43,7 @@ def get_href_date():
             if check_is_exist(body, "class", 'MUxGbd.wuQ4Ob.WZ8Tjf'):
                 date = body.find_element_by_class_name('MUxGbd.wuQ4Ob.WZ8Tjf').get_attribute("textContent")
             hrefs.append(href)
-            if "전" in date:
+            if date.count(".") != 3 or date.count(" ") != 4:
                 date = ""
             dates.append(process_datetime(2, date))
         return hrefs, dates
@@ -103,7 +91,7 @@ def get_content():
         return [headline, date, content]
 
 
-def get_html(hrefs, dates):
+def get_html(year, hrefs, dates, results):
     link = ""
     try:
         for link, auth_date in zip(hrefs, dates):
@@ -121,7 +109,7 @@ def get_html(hrefs, dates):
                 # to-do: get date info from google lists
                 date = auth_date
             if date != 0 and content != "":
-                if 'korea' in content:
+                if 'korea' in content or 'Korea' in content or 'KOREA' in content:
                     results['country'].append('USA')
                     results['media'].append('LATimes')
                     results['date'].append(date)
@@ -133,12 +121,10 @@ def get_html(hrefs, dates):
             driver.switch_to.window(driver.window_handles[0])
 
     except KeyboardInterrupt or NoSuchElementException:
-        dict_to_df = pd.DataFrame.from_dict(results)
-        dict_to_df.to_excel(writer, sheet_name="LA TIMES")
-        writer.save()
+        save(year, results)
         print("에러 위치 : "+link)
         print("현재 데이터까지 저장완료")
-        driver.close()
+        # driver.close()
     return results
 
 def check_is_exist(window, type, name):
@@ -168,8 +154,10 @@ if __name__ == '__main__':
     m30 = [4, 6, 9, 11]
     cnt = 0
     start = time.time()
+    results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
     try:
         for year in years:
+            results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
             month = 1
             while month < 13:
                 if month == 2 and year % 4 == 0 :
@@ -183,25 +171,23 @@ if __name__ == '__main__':
                 mindate = str(month)+"/1/"+str(year)
                 maxdate = str(month)+"/"+str(day)+"/"+str(year)
                 month += 1
-                # url = "https://www.google.com/search?q=site:latimes.com+korea&tbs=cdr:1,cd_min:"+mindate+",cd_max:"+maxdate+"&sxsrf=ALeKk03Hf-An3StLLG2UrI734Sgb1u3Ryg:1627127389560&ei=Xf77YKvWIY_YhwOska3wDA&start=0&sa=N&filter=0&ved=2ahUKEwjr-Lvw0fvxAhUP7GEKHaxIC84Q8tMDegQIARBA&biw=1396&bih=694"
                 url = "https://www.google.com/search?q=site:latimes.com+korea&hl=ko&tbs=cdr:1,cd_min:"+mindate+",cd_max:"+maxdate+"&sxsrf=ALeKk02YYZF7z-FlZayh-pjIOHwKGUffBw:1627147371767&filter=0&biw=1536&bih=763"
                 driver.get(url=url)
                 hrefs, dates = get_href_date()
                 if len(hrefs) < 9:
                     time.sleep(40)
-                # csv = get_html(hrefs, dates)
-                get_html(hrefs, dates)
+                get_html(year, hrefs, dates, results)
                 while check_exist_button('pnnext'):
                     hrefs, dates = get_href_date()
-                    get_html(hrefs, dates)
-                # csv = get_html(hrefs, dates))
+                    get_html(year, hrefs, dates, results)
+            save(year, results)
+            print(str(year) + "년 데이터 수집 완료")
     except KeyboardInterrupt:
+        save(year, results)
         print("keyboard Interrupt")
+    else:
+        save(year, results)
     finally:
-        dict_to_df = pd.DataFrame.from_dict(results)
-        dict_to_df.to_excel(writer, sheet_name="LA TIMES")
-        writer.save()
-        print("데이터 수집 완료")
         print("소요시간: "+str(time.time() - start)+"초")
         driver.close()
 # "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=baidu&wd=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&ct=2097152&si=huanqiu.com&oq=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_pq=bf92af700009d7fe&rsv_t=0f91uZXQlpsDugWDd7vzdMeYRk%2FbKAI14VStZTYQKZidJ1nWcGiV32Wv20w&rqlang=cn&rsv_dl=tb&rsv_enter=1&gpc=stf%3D1262358000%2C1609426800%7Cstftype%3D2&tfflag=95&bs=site%3Ahuanqiu.com%20%E6%9C%9D%E9%B2%9C&rsv_jmp=fail"
