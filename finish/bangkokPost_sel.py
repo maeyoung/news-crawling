@@ -23,9 +23,11 @@ url = "https://search.bangkokpost.com/search/result?q=korea&category=all&sort=ne
 # url ="https://search.bangkokpost.com/search/result?start=1620&q=korea&category=all&refinementFilter=&sort=newest&rows=10"
 caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "normal"
-driver = webdriver.Chrome(desired_capabilities=caps, executable_path='./chromedriver')
+options = webdriver.ChromeOptions()
+options.add_argument('disable-gpu')
+driver = webdriver.Chrome(desired_capabilities=caps, options=options, executable_path='./chromedriver')
 driver.implicitly_wait(time_to_wait=5)
-
+cnt = 0
 
 def save(year, results):
     xlxs_dir = "./BangkokPost("+str(year)+").xlsx"
@@ -138,7 +140,7 @@ def get_html(year, results):
 
 
 if __name__ == '__main__':
-    years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+    years = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
     m31 = [1, 3, 5, 7, 8, 10, 12]
     m30 = [4, 6, 9, 11]
     start = time.time()
@@ -163,11 +165,6 @@ if __name__ == '__main__':
                 driver.get(url=url)
                 status, csv = get_html(year, csv)
             save(year, csv)
-            # xlxs_dir = "./BangkokPost.xlsx"
-            # writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
-            # dict_to_df = pd.DataFrame.from_dict(csv)
-            # dict_to_df.to_excel(writer, sheet_name="Bangkok Post")
-            # writer.save()
         if status == 1:
             print("데이터 수집 완료")
     except KeyboardInterrupt:
