@@ -26,7 +26,6 @@ def save(year, results) :
     writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
     dict_to_df = pd.DataFrame.from_dict(results)
     dict_to_df.to_excel(writer, sheet_name="LA TIMES")
-    results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
     writer.save()
 
 # get news url from google html script
@@ -176,10 +175,10 @@ if __name__ == '__main__':
                 hrefs, dates = get_href_date()
                 if len(hrefs) < 9:
                     time.sleep(40)
-                get_html(year, hrefs, dates, results)
+                results = get_html(year, hrefs, dates, results)
                 while check_exist_button('pnnext'):
                     hrefs, dates = get_href_date()
-                    get_html(year, hrefs, dates, results)
+                    results = get_html(year, hrefs, dates, results)
             save(year, results)
             print(str(year) + "년 데이터 수집 완료")
     except KeyboardInterrupt:
