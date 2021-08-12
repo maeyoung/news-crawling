@@ -159,7 +159,7 @@ if __name__ == '__main__':
     start = time.time()
     results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
     try:
-        url = "https://www.latimes.com/search?q=korea&s=1&p=877"
+        url = "https://www.latimes.com/search?q=korea&s=1&p=647"
         driver.get(url=url)
         breakSignal = False
         while True:
