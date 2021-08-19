@@ -133,6 +133,7 @@ def get_data(year, hrefs, dates, results):
         save(year, results)
         print("에러 위치 :"+link)
         print("현재 데이터까지 저장 완료")
+    return results
 
 
 
