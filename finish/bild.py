@@ -134,49 +134,6 @@ def get_data(year, hrefs, dates, results):
         print("에러 위치 :"+link)
         print("현재 데이터까지 저장 완료")
     return results
-            # data = ['German', 'Bild']
-            #
-            # if check_is_exist("class", "authors__pubdate") == False:
-            #     driver.close()
-            #     driver.switch_to.window(driver.window_handles[0])
-            #     continue
-            # n_date = driver.find_element_by_class_name("authors__pubdate").get_attribute("datetime")
-            # n_date = process_datetime(0, n_date)
-            # # print(n_date)
-            # data.append(n_date)
-            #
-            # # 중간에 <br>있는 경우 '\n'로 들어가는거 처리하기~!~!~!~!~!~!
-            # news_title = driver.find_element_by_class_name("headline").text
-            # data.append(news_title)
-            #
-            # if check_is_exist("class", "txt") == False:
-            #     driver.close()
-            #     driver.switch_to.window(driver.window_handles[0])
-            #     continue
-            # body = driver.find_element_by_class_name("txt")
-            # article = body.find_elements_by_tag_name("p")
-            # content = ""
-            # for t in article:
-            #     if t != "":
-            #         content += t.get_attribute("textContent").strip()
-            # data.append(content)
-            #
-            # data.append(driver.current_url)
-            # df.loc[len(df)] = data
-
-            # print(data)
-            #
-            # driver.close()
-            # driver.switch_to.window(driver.window_handles[0])
-    #
-    # except KeyboardInterrupt or NoSuchElementException:
-    #     xlxs_dir = "./bild.xlsx"
-    #     writer = pd.ExcelWriter(xlxs_dir, engine='xlsxwriter')
-    #     df.to_excel(writer, sheet_name="bild")
-    #     writer.save()
-    #     print("현재 데이터까지 저장완료")
-    #     driver.close()
-
 
 
 
