@@ -5,10 +5,8 @@ import time
 import pandas as pd
 from datetime import datetime
 
-url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&fenlei=256&oq=site%253Ahuanqiu.com%252F%2520%252B%25E9%259F%25A9%25E5%259B%25BD&rsv_pq=a72ae8b300008076&rsv_t=7ad1BpvE6L3vgxVx89WMKngBTDoJ0NAXJWCWa3AK%2B8j29D5QTlxkfpqD568&rqlang=cn&rsv_enter=1&rsv_dl=tb&rsv_sug3=1&rsv_sug2=0&rsv_btype=t&inputT=8&rsv_sug4=325"
-
 driver = webdriver.Chrome(executable_path='./chromedriver')
-driver.get(url=url)
+# driver.get(url=url)
 
 init_results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
 
@@ -159,20 +157,32 @@ def get_data(hrefs, dates, results):
 
 
 if __name__ == '__main__':
+    years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+    cnt = 0
+    start = time.time()
+    results = init_results
     try:
-        start = time.time()
-        results = init_results
-        hrefs, dates = get_href_date()
-        # print(hrefs)
-        # print(dates)
-        get_data(hrefs, dates, results)
-        while check_exist_button('n'):
-            hrefs, dates = get_href_date()
-            # print(hrefs)
-            # print(dates)
-            get_data(hrefs, dates, results)
-        data_save("correct", results)
-        # driver.close()
+        for year in years:
+            results = init_results
+            month = 1
+            while month < 13:
+                mindate = datetime(year,month,1,0,0).strftime('%s')
+                if month == 12:
+                    maxdate = datetime(year + 1,1,1,0,0).strftime('%s')
+                else:
+                    maxdate = datetime(year,month + 1,1,0,0).strftime('%s')
+                print('mindate : '+mindate+' maxdate : '+maxdate)
+                month += 1
+                search_url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&ct=2097152&si=huanqiu.com%2F&fenlei=256&oq=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&rsv_enter=1&rsv_dl=tb&gpc=stf%3D" + mindate + "%2C" + maxdate + "%7Cstftype%3D2&tfflag=1"
+                driver.get(url=search_url)
+                time.sleep(3)
+
+                hrefs, dates = get_href_date()
+                get_data(hrefs, dates, results)
+                while check_exist_button('n'):
+                    hrefs, dates = get_href_date()
+                    get_data(hrefs, dates, results)
+            data_save(year, results)
 
     except:
         data_save("error", results)
@@ -181,3 +191,7 @@ if __name__ == '__main__':
     finally:
         print("최종소요시간: " + str(time.time() - start) + "초")
         driver.close()
+
+
+
+# datetime(2010,1,2,0,0).strftime('%s')
