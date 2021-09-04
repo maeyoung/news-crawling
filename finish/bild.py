@@ -52,10 +52,10 @@ def get_href_date():
                 head = elem.find_element_by_class_name('yuRUbf')
                 body = elem.find_element_by_class_name('IsZvec')
                 href = head.find_element_by_tag_name('a').get_attribute('href')
+                hrefs.append(href)
                 date = ""
                 if check_is_exist(body, "class", 'MUxGbd.wuQ4Ob.WZ8Tjf'):
                     date = body.find_element_by_class_name('MUxGbd.wuQ4Ob.WZ8Tjf').get_attribute("textContent")
-                hrefs.append(href)
                 if date.count(".") != 3 or date.count(" ") != 4:
                     date = ""
                 dates.append(process_datetime(2, date))
@@ -95,7 +95,7 @@ def get_content():
         article = body.find_elements_by_tag_name("p")
         for t in article:
             if t != "":
-                content += t.get_attribute("textContent").strip()
+                content += t.get_attribute("textContent").strip() + " "
             #todo
             # 중간에 <br> 있는 경우 '\n'으로 처리
         return [headline, date, content]
@@ -138,7 +138,7 @@ def get_data(year, hrefs, dates, results):
 
 
 if __name__ == '__main__':
-    year = 2010
+    year = 2013
     m31 = [1, 3, 5, 7, 8, 10, 12]
     m30 = [4, 6, 9, 11]
     start = time.time()

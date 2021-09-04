@@ -1,0 +1,5 @@
+1. conda create -n <name> python=3.6
+2. conda activate <name>
+2. conda install pandas
+3. conda install selenium
+4. python <filename>.py
