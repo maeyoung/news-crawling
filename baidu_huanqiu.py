@@ -4,6 +4,9 @@ from selenium.webdriver.common.keys import Keys
 import time
 import pandas as pd
 from datetime import datetime
+import sys, traceback
+import logging
+logging.basicConfig(level=logging.ERROR)
 
 driver = webdriver.Chrome(executable_path='./chromedriver')
 # driver.get(url=url)
@@ -39,8 +42,8 @@ def get_href_date():
             dates.append(process_datetime(1, date))
         return hrefs, dates
     except:
-        print('error')
         driver.close()
+        logging.error(traceback.print_exc())
 
 
 def process_datetime(type, info):
@@ -88,6 +91,8 @@ def check_exist_button(b_name):
         time.sleep(3)
     except NoSuchElementException:
         return False
+    except IndexError:
+        return False
     return True
 
 def get_data(hrefs, dates, results):
@@ -109,7 +114,7 @@ def get_data(hrefs, dates, results):
                 driver.switch_to.window(driver.window_handles[0])
                 continue
 
-            print(results)
+            # print(results)
 
             # date
             if check_is_exist(driver, "class", "time"):
@@ -117,7 +122,7 @@ def get_data(hrefs, dates, results):
                 date = process_datetime(0, date)
             else:
                 date = auth_date
-            print(results)
+            # print(results)
             # headline
             title = driver.find_element_by_class_name("t-container-title")
             if check_is_exist(title, "tag", "h3") == False:
@@ -125,7 +130,7 @@ def get_data(hrefs, dates, results):
                 driver.switch_to.window(driver.window_handles[0])
                 continue
             title = title.find_element_by_tag_name("h3").text
-            print(results)
+            # print(results)
             # article 
             body = driver.find_element_by_class_name("l-con.clear")
             article = body.find_elements_by_tag_name("p")
@@ -134,25 +139,33 @@ def get_data(hrefs, dates, results):
                 if t != "":
                     content += t.get_attribute("textContent").strip()
             if "韩国" not in content:
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
                 continue
 
-            print(results)
+            # print(results)
             results['country'].append('China')
             results['media'].append('Huanqiu')
             results['date'].append(date)
             results['headline'].append(title)
             results['article'].append(content)
             results['url'].append(cur_url)
-            print(results)
+            # print(results)
 
 
             driver.close()
             driver.switch_to.window(driver.window_handles[0])
 
+            if len(hrefs) < 10:
+                time.sleep(10)
+
     except:
         data_save("error", results)
-        print("에러 위치 : " + cur_url)
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
         print("현재 데이터까지 저장완료")
+        print("에러 위치 : " + cur_url)
+        logging.error(traceback.print_exc())
         # return results
 
 
@@ -166,14 +179,24 @@ if __name__ == '__main__':
             results = init_results
             month = 1
             while month < 13:
-                mindate = datetime(year,month,1,0,0).strftime('%s')
+                # mindate = datetime(year,month,1,0,0).strftime('%s')
+                s_min = "01/"+str(month)+"/"+str(year)+" 00:00:00"
+                d_min = datetime.strptime(s_min, "%d/%m/%Y %H:%M:%S")
+                r_min = time.mktime(d_min.timetuple())
+                mindate = int(r_min)
                 if month == 12:
-                    maxdate = datetime(year + 1,1,1,0,0).strftime('%s')
+                    # maxdate = datetime(year + 1,1,1,0,0).strftime('%s')
+                    s_max = "01/01/"+str(year+1)+" 00:00:00"
                 else:
-                    maxdate = datetime(year,month + 1,1,0,0).strftime('%s')
-                print('mindate : '+mindate+' maxdate : '+maxdate)
+                    # maxdate = datetime(year,month + 1,1,0,0).strftime('%s')
+                    s_max = "01/"+str(month+1)+"/"+str(year)+" 00:00:00"
+                d_max = datetime.strptime(s_max, "%d/%m/%Y %H:%M:%S")
+                r_max = time.mktime(d_max.timetuple())
+                maxdate = int(r_max)
+                # print('mindate : '+mindate+' maxdate : '+maxdate)
                 month += 1
-                search_url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&ct=2097152&si=huanqiu.com%2F&fenlei=256&oq=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&rsv_enter=1&rsv_dl=tb&gpc=stf%3D" + mindate + "%2C" + maxdate + "%7Cstftype%3D2&tfflag=1"
+                search_url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&ct=2097152&si=huanqiu.com%2F&fenlei=256&oq=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&rsv_enter=1&rsv_dl=tb&gpc=stf%3D" + str(mindate) + "%2C" + str(maxdate) + "%7Cstftype%3D2&tfflag=1"
+                print(search_url)
                 driver.get(url=search_url)
                 time.sleep(3)
 
@@ -186,7 +209,8 @@ if __name__ == '__main__':
 
     except:
         data_save("error", results)
-        print("Error")
+        # print("Error : " + e)
+        logging.error(traceback.print_exc())
 
     finally:
         print("최종소요시간: " + str(time.time() - start) + "초")
