@@ -103,7 +103,7 @@ def get_content():
     content = ""
     try:
         if check_is_exist(driver, 'class', 'responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.css-901oao.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n.r-1g94qm0'):
-            date = driver.find_element_by_class_name("responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.css-901oao.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n.r-1g94qm0").get_element_by_tag_name("time").get_attribute("datetime")
+            date = driver.find_element_by_class_name("responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.css-901oao.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n.r-1g94qm0").find_element_by_tag_name("time").get_attribute("datetime")
             date = process_datetime(1, date)
         elif check_is_exist(driver, 'class', 'css-901oao.css-16my406.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n'):
             date = driver.find_element_by_class_name("css-901oao.css-16my406.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n").find_element_by_tag_name("time").get_attribute("datetime")
