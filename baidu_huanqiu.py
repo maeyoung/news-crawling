@@ -1,3 +1,5 @@
+import sys
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
@@ -179,16 +181,13 @@ if __name__ == '__main__':
             results = init_results
             month = 1
             while month < 13:
-                # mindate = datetime(year,month,1,0,0).strftime('%s')
                 s_min = "01/"+str(month)+"/"+str(year)+" 00:00:00"
                 d_min = datetime.strptime(s_min, "%d/%m/%Y %H:%M:%S")
                 r_min = time.mktime(d_min.timetuple())
                 mindate = int(r_min)
                 if month == 12:
-                    # maxdate = datetime(year + 1,1,1,0,0).strftime('%s')
                     s_max = "01/01/"+str(year+1)+" 00:00:00"
                 else:
-                    # maxdate = datetime(year,month + 1,1,0,0).strftime('%s')
                     s_max = "01/"+str(month+1)+"/"+str(year)+" 00:00:00"
                 d_max = datetime.strptime(s_max, "%d/%m/%Y %H:%M:%S")
                 r_max = time.mktime(d_max.timetuple())
@@ -208,6 +207,7 @@ if __name__ == '__main__':
             data_save(year, results)
 
     except:
+        print(sys.exc_info[0])
         data_save("error", results)
         # print("Error : " + e)
         logging.error(traceback.print_exc())
