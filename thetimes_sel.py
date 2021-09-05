@@ -121,7 +121,9 @@ def get_content():
             #todo
             # 중간에 <br> 있는 경우 '\n'으로 처리
         return [headline, date, content]
-    except NoSuchElementException or KeyboardInterrupt:
+    except NoSuchElementException:
+        return [headline, date, content]
+    except KeyboardInterrupt:
         return [headline, date, content]
 
 
@@ -189,7 +191,7 @@ if __name__ == '__main__':
                 if hrefs == 0:
                     continue
                 if len(hrefs) < 9:
-                    time.sleep(40)
+                    time.sleep(20)
                 results = get_data(year, hrefs, dates, results)
                 while check_exist_button('pnnext'):
                     hrefs, dates = get_href_date()
