@@ -103,7 +103,7 @@ def get_content():
     content = ""
     try:
         if check_is_exist(driver, 'class', 'responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.css-901oao.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n.r-1g94qm0'):
-            date = driver.find_element_by_class_name("responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.css-901oao.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n.r-1g94qm0").get_element_by_tag_name("time").get_attribute("datetime")
+            date = driver.find_element_by_class_name("responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.responsiveweb__DatePublicationContainer-sc-1nipn43-0.duAfph.css-901oao.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n.r-1g94qm0").find_element_by_tag_name("time").get_attribute("datetime")
             date = process_datetime(1, date)
         elif check_is_exist(driver, 'class', 'css-901oao.css-16my406.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n'):
             date = driver.find_element_by_class_name("css-901oao.css-16my406.r-1khp51w.r-j2s0nr.r-n6v787.r-fxxt2n").find_element_by_tag_name("time").get_attribute("datetime")
@@ -121,7 +121,9 @@ def get_content():
             #todo
             # 중간에 <br> 있는 경우 '\n'으로 처리
         return [headline, date, content]
-    except NoSuchElementException or KeyboardInterrupt:
+    except NoSuchElementException:
+        return [headline, date, content]
+    except KeyboardInterrupt:
         return [headline, date, content]
 
 
@@ -189,7 +191,7 @@ if __name__ == '__main__':
                 if hrefs == 0:
                     continue
                 if len(hrefs) < 9:
-                    time.sleep(40)
+                    time.sleep(20)
                 results = get_data(year, hrefs, dates, results)
                 while check_exist_button('pnnext'):
                     hrefs, dates = get_href_date()
