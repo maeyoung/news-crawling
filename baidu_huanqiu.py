@@ -77,8 +77,6 @@ def check_exist_button(b_name):
         btns = driver.find_elements_by_class_name(b_name)
         next = btns[-1]
         btn_text = next.get_attribute("textContent")
-        print(btn_text)
-        # 下一页 >
         if btn_text == "下一页 >":
             next.send_keys(Keys.ENTER)
             time.sleep(3)
