@@ -1,10 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.keys import Keys
+
 import time
 import pandas as pd
 from datetime import datetime
+
 import sys, traceback
 import logging
 logging.basicConfig(level=logging.ERROR)
@@ -13,7 +15,6 @@ caps = DesiredCapabilities().CHROME
 caps["pageLoadStrategy"] = "eager" # interactive
 driver = webdriver.Chrome(desired_capabilities=caps, executable_path='./chromedriver')
 
-# init_results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
 
 date_word = ["年", "月", "日", "時", "分"]
 
@@ -89,9 +90,9 @@ def check_exist_button(b_name):
     except IndexError as i:
         print(i)
         return False
-    # return True
 
-def get_data(year, hrefs, dates, results):
+
+def get_data(hrefs, dates, results):
     try:
         for link, auth_date in zip(hrefs, dates):
             driver.execute_script("window.open();")
@@ -148,28 +149,38 @@ def get_data(year, hrefs, dates, results):
             driver.switch_to.window(driver.window_handles[0])
 
         if len(hrefs) < 10:
-            time.sleep(20)
+            time.sleep(40)
             print("time wait.....")
 
+        return results
+
+
+    except TimeoutException as e:
+        print(e + " : " + cur_url)
+    
+    except NoSuchElementException as e:
+        print(e + " : " + cur_url)
+
+    except KeyboardInterrupt:
+        # data_save(year, results)
+        print(str(year) + "년 데이터 중간 저장")
+        print("keyboard Interrupt")
+
     except:
-        data_save(year, results)
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        print("\n\n현재 데이터까지 저장완료")
-        print("에러 위치 : " + cur_url + "\n\n")
         logging.error(traceback.print_exc())
+        print("에러 위치 : " + cur_url)
+
 
 
 if __name__ == '__main__':
-    years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
-    cnt = 0
+    years = [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
     start = time.time()
-    results = {'country':list(), 'media': list(), 'date': list(), 'headline': list(), 'article':list(), 'url': list()}
+    # results = {'country':list(), 'media': list(), 'date': list(), 'headline': list(), 'article':list(), 'url': list()}
     try:
         for year in years:
             results = {'country':list(), 'media': list(), 'date': list(), 'headline': list(), 'article':list(), 'url': list()}
 
-            month = 1
+            month = 12
             while month < 13:
                 s_min = "01/"+str(month)+"/"+str(year)+" 00:00:00"
                 d_min = datetime.strptime(s_min, "%d/%m/%Y %H:%M:%S")
@@ -184,22 +195,28 @@ if __name__ == '__main__':
                 maxdate = int(r_max)
 
                 search_url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&ct=2097152&si=huanqiu.com%2F&fenlei=256&oq=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&rsv_enter=1&rsv_dl=tb&gpc=stf%3D" + str(mindate) + "%2C" + str(maxdate) + "%7Cstftype%3D2&tfflag=1"
-                print("year:" + str(year) + " month: " + str(month))
+                # print("year:" + str(year) + " month: " + str(month))
                 month += 1
+
                 driver.get(url=search_url)
                 time.sleep(3)
 
                 hrefs, dates = get_href_date()
-                get_data(year, hrefs, dates, results)
+                results = get_data(hrefs, dates, results)
+                
                 while check_exist_button('n'):
                     hrefs, dates = get_href_date()
-                    get_data(year, hrefs, dates, results)
+                    results = get_data(hrefs, dates, results)
+
             data_save(year, results)
             print(str(year)+"년 데이터 수집 완료")
 
-    except:
+    except KeyboardInterrupt:
         data_save(year, results)
-        print("\n\n현재 데이터까지 저장완료\n\n")
+        print(str(year) + "년 데이터 중간 저장")
+        print("keyboard Interrupt")
+
+    except:
         logging.error(traceback.print_exc())
 
     finally:
