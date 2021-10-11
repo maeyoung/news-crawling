@@ -182,7 +182,7 @@ def get_data_sub(auth_date, cur_url, param, param_type, results):
         results['url'].append(cur_url)
 
         article_cnt += 1
-        print("article_cnt: ", article_cnt)
+        # print("article_cnt: ", article_cnt)
 
         return results
     
@@ -210,7 +210,7 @@ def get_data(hrefs, dates, results):
             cur_url = driver.current_url
             if cur_url == "https://www.asahi.com/":
                 driver.close()
-                driver.switch_to.window(driver.window_handles[0])
+                driver.switch_to.window(driver.window_handles[1])
                 continue
 
             param = [
@@ -231,7 +231,7 @@ def get_data(hrefs, dates, results):
                     break
 
             driver.close()
-            driver.switch_to.window(driver.window_handles[0])
+            driver.switch_to.window(driver.window_handles[1])
 
         if len(hrefs) < 9:
             time.sleep(40)
@@ -304,6 +304,8 @@ if __name__ == '__main__':
 
                 search_url = "https://www.google.com/search?q=site:www.asahi.com+%E9%9F%93%E5%9B%BD&tbs=cdr:1,cd_min:" + mindate + ",cd_max:" + maxdate + "&filter=0&biw=1792&bih=1008"
 
+                driver.execute_script("window.open();")
+                driver.switch_to.window(driver.window_handles[-1])
                 driver.get(url=search_url)
                 print(search_url)
                 time.sleep(10)
