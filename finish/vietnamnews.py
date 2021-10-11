@@ -77,9 +77,11 @@ def get_content(href):
         body = WebDriverWait(driver, 60).until(
             EC.presence_of_element_located((By.CLASS_NAME, "vnnews-text-post"))
         )
-        article = body.find_elements_by_tag_name("p")
-        for b in article:
-            content += b.get_attribute("textContent") + " "
+        article = body.get_attribute("textContent")
+            #find_elements_by_tag_name("p")
+        content = article
+        # for b in article:
+        #     content += b.get_attribute("textContent") + " "
         if check_is_exist(driver, 'class', 'vnnews-time-post'):
             article_info = driver.find_element_by_class_name('vnnews-time-post').find_element_by_tag_name("span")
             dt = article_info.get_attribute('textContent').strip()
@@ -137,13 +139,13 @@ def get_html(year, results):
         print("취소 - 에러 위치: "+href)
         return 0, results
     except NoSuchElementException:
-        save(year, results)
-        print("현재 데이터까지 저장 완료")
+        #save(year, results)
+        #print("현재 데이터까지 저장 완료")
         print("요소 에러 - 에러 위치: "+href)
         return 0, results
     except Exception as e:
-        save(year, results)
-        print("현재 데이터까지 저장 완료")
+        #save(year, results)
+        #print("현재 데이터까지 저장 완료")
         print("기타 에러 - 에러 위치: "+href)
         print(e)
         return 0, results
@@ -152,7 +154,7 @@ def get_html(year, results):
 
 
 if __name__ == '__main__':
-    years = [2016, 2017, 2018, 2019, 2020]
+    years = [ 2018, 2019, 2020]
     m31 = [1, 3, 5, 7, 8, 10, 12]
     m30 = [4, 6, 9, 11]
     start = time.time()
