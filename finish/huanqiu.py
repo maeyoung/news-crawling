@@ -96,6 +96,11 @@ def check_exist_button(b_name):
 def get_data(hrefs, dates, results):
     try:
         for link, auth_date in zip(hrefs, dates):
+
+            if "gallery" in link:
+                time.sleep(3)
+                continue
+
             driver.execute_script("window.open();")
             driver.switch_to.window(driver.window_handles[-1])
             driver.get(url=link)
@@ -204,10 +209,12 @@ if __name__ == '__main__':
                 time.sleep(3)
 
                 hrefs, dates = get_href_date()
+                print(hrefs)
                 results = get_data(hrefs, dates, results)
 
                 while check_exist_button('n'):
                     hrefs, dates = get_href_date()
+                    print(hrefs)
                     results = get_data(hrefs, dates, results)
 
                 month += 1

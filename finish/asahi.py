@@ -22,7 +22,7 @@ article_cnt = 0
 login_url = 'https://digital.asahi.com/login/?iref=pc_gnavi&jumpUrl=https%3A%2F%2Fwww.asahi.com%2F'
 
 caps = DesiredCapabilities().CHROME
-caps["pageLoadStrategy"] = "normal"
+caps["pageLoadStrategy"] = "eager"
 driver = webdriver.Chrome(desired_capabilities=caps, executable_path='./chromedriver')
 # driver = webdriver.Chrome(executable_path='./chromedriver')
 # driver.implicitly_wait(time_to_wait=5)
@@ -235,7 +235,7 @@ def get_data(hrefs, dates, results):
 
         if len(hrefs) < 9:
             time.sleep(40)
-            print("time wait.....")
+            # print("time wait.....")
 
         return results
 
@@ -305,13 +305,18 @@ if __name__ == '__main__':
                 search_url = "https://www.google.com/search?q=site:www.asahi.com+%E9%9F%93%E5%9B%BD&tbs=cdr:1,cd_min:" + mindate + ",cd_max:" + maxdate + "&filter=0&biw=1792&bih=1008"
 
                 driver.get(url=search_url)
-                time.sleep(3)
+                print(search_url)
+                time.sleep(10)
                 
                 hrefs, dates = get_href_date()
+                # print(hrefs)
+                time.sleep(3)
                 results = get_data(hrefs, dates, results)
 
                 while check_exist_button('pnnext'):
                     hrefs, dates = get_href_date()
+                    # print(hrefs)
+                    time.sleep(3)
                     results = get_data(hrefs, dates, results)
 
                 month += 1
