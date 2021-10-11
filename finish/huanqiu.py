@@ -85,10 +85,11 @@ def check_exist_button(b_name):
         else:
             return False
     except NoSuchElementException as nse:
-        print(nse)
+        # print(nse)
         return False
     except IndexError as i:
-        print(i)
+        # print(i)
+        # logging.error(traceback.print_exc())
         return False
 
 
@@ -148,9 +149,9 @@ def get_data(hrefs, dates, results):
             driver.close()
             driver.switch_to.window(driver.window_handles[0])
 
-        if len(hrefs) < 10:
-            time.sleep(40)
-            print("time wait.....")
+        if len(hrefs) < 8:
+            time.sleep(30)
+            # print("time wait.....")
 
         return results
 
@@ -163,7 +164,8 @@ def get_data(hrefs, dates, results):
 
     except KeyboardInterrupt:
         # data_save(year, results)
-        print(str(year) + "년 데이터 중간 저장")
+        # print(str(year) + "년 데이터 중간 저장")
+        print("취소")
         print("keyboard Interrupt")
 
     except:
@@ -173,14 +175,15 @@ def get_data(hrefs, dates, results):
 
 
 if __name__ == '__main__':
-    years = [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+    years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
     start = time.time()
     # results = {'country':list(), 'media': list(), 'date': list(), 'headline': list(), 'article':list(), 'url': list()}
     try:
         for year in years:
+
             results = {'country':list(), 'media': list(), 'date': list(), 'headline': list(), 'article':list(), 'url': list()}
 
-            month = 12
+            month = 1
             while month < 13:
                 s_min = "01/"+str(month)+"/"+str(year)+" 00:00:00"
                 d_min = datetime.strptime(s_min, "%d/%m/%Y %H:%M:%S")
@@ -196,17 +199,18 @@ if __name__ == '__main__':
 
                 search_url = "https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&ct=2097152&si=huanqiu.com%2F&fenlei=256&oq=site%3Ahuanqiu.com%2F%20%2B%E9%9F%A9%E5%9B%BD&rsv_enter=1&rsv_dl=tb&gpc=stf%3D" + str(mindate) + "%2C" + str(maxdate) + "%7Cstftype%3D2&tfflag=1"
                 # print("year:" + str(year) + " month: " + str(month))
-                month += 1
 
                 driver.get(url=search_url)
                 time.sleep(3)
 
                 hrefs, dates = get_href_date()
                 results = get_data(hrefs, dates, results)
-                
+
                 while check_exist_button('n'):
                     hrefs, dates = get_href_date()
                     results = get_data(hrefs, dates, results)
+
+                month += 1
 
             data_save(year, results)
             print(str(year)+"년 데이터 수집 완료")
@@ -214,6 +218,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         data_save(year, results)
         print(str(year) + "년 데이터 중간 저장")
+        print("취소")
         print("keyboard Interrupt")
 
     except:
