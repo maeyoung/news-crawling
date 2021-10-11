@@ -210,7 +210,7 @@ def get_data(hrefs, dates, results):
             cur_url = driver.current_url
             if cur_url == "https://www.asahi.com/":
                 driver.close()
-                driver.switch_to.window(driver.window_handles[1])
+                driver.switch_to.window(driver.window_handles[-1])
                 continue
 
             param = [
@@ -231,7 +231,7 @@ def get_data(hrefs, dates, results):
                     break
 
             driver.close()
-            driver.switch_to.window(driver.window_handles[1])
+            driver.switch_to.window(driver.window_handles[-1])
 
         if len(hrefs) < 9:
             time.sleep(40)
@@ -280,7 +280,7 @@ def check_exist_button(b_name):
 
 if __name__ == '__main__':
 
-    years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+    years = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
     m31 = [1, 3, 5, 7, 8, 10, 12]
     m30 = [4, 6, 9, 11]
     start = time.time()
@@ -289,7 +289,7 @@ if __name__ == '__main__':
         for year in years:
             article_cnt = 0
             results = {'country': list(), 'media': list(), 'date': list(), 'headline': list(), 'article': list(), 'url': list()}
-            month = 1
+            month = 12
             while month < 13:
                 if month == 2 and year % 4 == 0:
                     day = 29
@@ -307,7 +307,7 @@ if __name__ == '__main__':
                 driver.execute_script("window.open();")
                 driver.switch_to.window(driver.window_handles[-1])
                 driver.get(url=search_url)
-                print(search_url)
+                # print(search_url)
                 time.sleep(10)
                 
                 hrefs, dates = get_href_date()
@@ -320,6 +320,9 @@ if __name__ == '__main__':
                     # print(hrefs)
                     time.sleep(3)
                     results = get_data(hrefs, dates, results)
+
+                driver.close()
+                driver.switch_to.window(driver.window_handles[-1])
 
                 month += 1
 

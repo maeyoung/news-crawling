@@ -168,8 +168,6 @@ def get_data(hrefs, dates, results):
         print(e + " : " + cur_url)
 
     except KeyboardInterrupt:
-        # data_save(year, results)
-        # print(str(year) + "년 데이터 중간 저장")
         print("취소")
         print("keyboard Interrupt")
 
@@ -182,7 +180,6 @@ def get_data(hrefs, dates, results):
 if __name__ == '__main__':
     years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
     start = time.time()
-    # results = {'country':list(), 'media': list(), 'date': list(), 'headline': list(), 'article':list(), 'url': list()}
     try:
         for year in years:
 
@@ -206,15 +203,15 @@ if __name__ == '__main__':
                 # print("year:" + str(year) + " month: " + str(month))
 
                 driver.get(url=search_url)
-                time.sleep(3)
+                time.sleep(10)
 
                 hrefs, dates = get_href_date()
-                print(hrefs)
+                # print(hrefs)
                 results = get_data(hrefs, dates, results)
 
                 while check_exist_button('n'):
                     hrefs, dates = get_href_date()
-                    print(hrefs)
+                    # print(hrefs)
                     results = get_data(hrefs, dates, results)
 
                 month += 1
