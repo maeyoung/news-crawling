@@ -138,7 +138,7 @@ def get_data(year, hrefs, dates, results):
 
 
 if __name__ == '__main__':
-    year = 2013
+    year = 2010
     m31 = [1, 3, 5, 7, 8, 10, 12]
     m30 = [4, 6, 9, 11]
     start = time.time()
