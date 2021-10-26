@@ -207,17 +207,3 @@ if __name__ == '__main__':
     finally:
         print("소요시간: "+str(time.time() - start) + "초")
         driver.close()
-#
-# responsiveweb__HeadlineContainer-sc-1jw79sf-0 hGQexq css-4rbku5 responsiveweb__HeadlineContainer-sc-1jw79sf-0 hGQexq css-901oao r-1yqk5fa r-iirzy8 r-1ra0lkn r-1j8sj39 r-11mo1y0
-# responsiveweb__HeadlineContainer-sc-1jw79sf-0 hGQexq css-4rbku5 responsiveweb__HeadlineContainer-sc-1jw79sf-0 hGQexq css-901oao r-1yqk5fa r-iirzy8 r-1ra0lkn r-1j8sj39 r-11mo1y0
-# responsiveweb__HeadlineContainer-sc-1jw79sf-0 hGQexq css-4rbku5 responsiveweb__HeadlineContainer-sc-1jw79sf-0 hGQexq css-901oao r-1yqk5fa r-iirzy8 r-1ra0lkn r-1j8sj39 r-11mo1y0
-# responsiveweb__HeadlineContainer-sc-1nipn43-3 fNhwNg css-4rbku5 responsiveweb__HeadlineContainer-sc-1nipn43-3 fNhwNg css-901oao r-iirzy8 r-1ra0lkn r-1j8sj39 r-15d164r r-q4m81j
-# responsiveweb__HeadlineContainer-sc-1nipn43-3 fNhwNg css-4rbku5 responsiveweb__HeadlineContainer-sc-1nipn43-3 fNhwNg css-901oao r-iirzy8 r-1ra0lkn r-1j8sj39 r-15d164r r-q4m81j
-# responsiveweb__HeadlineContainer-sc-1nipn43-3 fNhwNg css-4rbku5 responsiveweb__HeadlineContainer-sc-1nipn43-3 fNhwNg css-901oao r-iirzy8 r-1ra0lkn r-1j8sj39 r-15d164r r-q4m81j
-#
-# css-901oao css-16my406 r-1khp51w r-j2s0nr r-n6v787 r-fxxt2n
-# css-901oao css-16my406 r-1khp51w r-j2s0nr r-n6v787 r-fxxt2n
-# responsiveweb__Meta-sc-1nipn43-5 gMojeh responsiveweb__Meta-sc-1nipn43-5 gMojeh css-1dbjc4n r-18u37iz r-1w6e6rj r-1777fci
-# responsiveweb__Meta-sc-1nipn43-5 gMojeh responsiveweb__Meta-sc-1nipn43-5 gMojeh css-1dbjc4n r-18u37iz r-1w6e6rj r-1777fci
-# responsiveweb__DatePublicationContainer-sc-1nipn43-0 duAfph responsiveweb__DatePublicationContainer-sc-1nipn43-0 duAfph css-901oao r-1khp51w r-j2s0nr r-n6v787 r-fxxt2n r-1g94qm0
-# responsiveweb__DatePublicationContainer-sc-1nipn43-0 duAfph responsiveweb__DatePublicationContainer-sc-1nipn43-0 duAfph css-901oao r-1khp51w r-j2s0nr r-n6v787 r-fxxt2n r-1g94qm0
